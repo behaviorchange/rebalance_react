@@ -10,37 +10,60 @@ var {
     StyleSheet,
     Text,
     View,
+    ListView
 } = React;
+
+
+var WELLNESS_SOURCES = [
+    { name: 'exercise' },
+    { name: 'diet/nutrition' },
+    { name: 'time in nature' },
+    { name: 'relationships' },
+    { name: 'recreation/play' },
+    { name: 'relaxation + stress management' },
+    { name: 'religious/spiritual involvement' },
+    { name: 'contribution + service' }
+];
 
 var rebalance = React.createClass({
     render: function() {
         return (
-                <ListView style={styles.container}>
-                <Text style={styles.instructions}>
-                Hi there!
-            </Text>
-                </View>
+            <ListView
+            dataSource={this.state.dataSource}
+            renderRow={this.renderWellnessSource}
+            style={styles.listView}
+            />
+        );
+    },
+
+    getInitialState: function() {
+        return {
+            dataSource: new ListView.DataSource({
+                rowHasChanged: (row1, row2) => row1 !== row2
+            }),
+            wellnessSources: null,            
+        }
+    },
+
+    componentDidMount: function() {
+        this.getWellness();
+    },
+
+    getWellness: function() {
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(WELLNESS_SOURCES)
+        });
+    },
+
+    renderWellnessSource: function(wellnessSource) {
+        return (
+            <View style={styles.container}>
+            <Text style={styles.wellnessName}>{wellnessSource.name}</Text>
+            </View>
         );
     }
 
-    renderWellnessSource: function(wellnessSource) {
-
-    }
-
-    
 });
-
-
-var WELLNESS_SOURCES = [
-    'exercise',
-    'diet/nutrition',
-    'time in nature',
-    'relationships',
-    'recreation/play',
-    'relaxation + stress management',
-    'religious/spiritual involvement',
-    'contribution + service'
-];
 
 var styles = StyleSheet.create({
     container: {
@@ -48,17 +71,8 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
+        flexDirection: 'row',
+    }
 });
 
 AppRegistry.registerComponent('rebalance', () => rebalance);
